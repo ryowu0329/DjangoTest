@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block head_title %}
+  {{ title }}
+{% endblock head_title %}
+
+{% block style %}
+  <style>
+    .form__container { border-radius: 5px; background-color: #f2f2f2; padding: 20px; margin-top: 20px}
+    .help-block {
+      color: red;
+    }
+  </style>
+{% endblock style %}
+
+
+{% block content %}
+  <div class="form__container">
+    <h1>{{ title }}</h1>
+    <p>是否同意此最終判定的結論，同意請按"核准"，不同意請按"返回"</p>
+    <form method="POST" action="" enctype='multipart/form-data'>{% csrf_token %}
+      {{ form.subSigntrueB|attr:"type:hidden" }}
+      {{ form.subSigntrueDateB|attr:"type:hidden" }}
+      {{ form.subSigntrueWorkAreaB|attr:"type:hidden" }}
+
+      
+      {{ request.user.userFullName|json_script:"author_fullname" }}
+      {{ request.user.userWorkArea|json_script:"author_workarea"}}
+
+      <a href="{% url 'yfcase:yfcase_detail' instance_yfcase.id %}" class="btn btn-secondary" >返回</a>
+      <input type="submit" class="btn btn-primary" value="核准" onclick="post_subsignture_b_edit_submit()">
+    </form>
+  </div>
+
+  <!-- 為防止在運行jquery程式碼時出錯Uncaught ReferenceError: $ is not defined，所以要將jquery.min.js -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+   
+  <script>
+    function post_subsignture_b_edit_submit() {
+      const author_fullname = JSON.parse(document.getElementById('author_fullname').textContent);
+      const author_workarea = JSON.parse(document.getElementById('author_workarea').textContent);
+      var Today = new Date();
+      var addToday = Today.getFullYear()+ "-" + ("0" + (Today.getMonth() + 1)).slice(-2) + "-" + ("0" + Today.getDate()).slice(-2)
+      document.getElementById("id_subSigntrueDateB").value = addToday;
+      document.getElementById("id_subSigntrueB").value = author_fullname;
+      document.getElementById("id_subSigntrueWorkAreaB").value = author_workarea;
+    }
+  </script>
+{% endblock %}

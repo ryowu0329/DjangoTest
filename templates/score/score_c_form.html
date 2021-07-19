@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block head_title %}
+  {{ title }}
+{% endblock head_title %}
+
+{% block style %}
+  <style>
+    .form__container { border-radius: 5px; background-color: #f2f2f2; padding: 20px; margin-top: 20px}
+    .help-block {
+      color: red;
+    }
+    label{ font-size: 14pt; font-weight:700; }
+    .item__c__1 { background-color: AntiqueWhite; padding:5px 0px; margin-bottom:5px; border-radius:10px; border: 1px solid lightgrey;}
+    .item__c__2 { background-color: Linen; padding:5px 0px; margin-bottom:5px; border-radius:10px; border: 1px solid lightgrey;}
+    .item__c__3 { background-color: AntiqueWhite; padding:5px 0px; margin-bottom:5px; border-radius:10px; border: 1px solid lightgrey;}
+    .item__c__4 { background-color: Linen; padding:5px 0px; margin-bottom:5px; border-radius:10px; border: 1px solid lightgrey;}
+    .item__c__5 { background-color: AntiqueWhite; padding:5px 0px; margin-bottom:5px; border-radius:10px; border: 1px solid lightgrey;}
+    .item__c__other { background-color: Linen; padding:5px 0px; margin-bottom:5px; border-radius:10px; border: 1px solid lightgrey;}
+  </style>
+{% endblock style %}
+
+
+{% block content %}
+  <div class="form__container">
+    <h1>{{ title }}</h1>
+    <form method="POST" action="" enctype='multipart/form-data'>{% csrf_token %}
+      {{ form.objectBuildScorerC|attr:"type:hidden" }}
+      {{ form.objectBuildScorRateC|attr:"type:hidden" }}
+      {{ form.objectBuildScorReasonC|attr:"type:hidden" }}
+      
+      <div class="row item__c__1">
+        <div class="col-md-2">
+          <label>加成係數1</label>
+          {{ form.plusValueC1|add_class:"form-control"|attr:"autocomplete:off" }}
+        </div>
+        <div class="col-md-10">
+          <label>項目1</label>
+          {{ form.plusItemC1|add_class:"form-control"|attr:"autocomplete:off" }}
+        </div>
+      </div>
+      
+      <div class="row item__c__2">
+        <div class="col-md-2">
+          <label>加成係數2</label>
+          {{ form.plusValueC2|add_class:"form-control"|attr:"autocomplete:off" }}
+        </div>
+        <div class="col-md-10">
+          <label>項目2</label>
+          {{ form.plusItemC2|add_class:"form-control"|attr:"autocomplete:off" }}
+        </div>
+      </div>
+    
+      <div class="row item__c__3">
+        <div class="col-md-2">
+          <label>加成係數3</label>
+          {{ form.plusValueC3|add_class:"form-control"|attr:"autocomplete:off" }}
+        </div>
+        <div class="col-md-10">
+          <label>項目3</label>
+          {{ form.plusItemC3|add_class:"form-control"|attr:"autocomplete:off" }}
+        </div>
+      </div>
+
+      <div class="row item__c__4">
+        <div class="col-md-2">
+          <label>加成係數4</label>
+          {{ form.plusValueC4|add_class:"form-control"|attr:"autocomplete:off" }}
+        </div>
+        <div class="col-md-10">
+          <label>項目4</label>
+          {{ form.plusItemC4|add_class:"form-control"|attr:"autocomplete:off" }}
+        </div>
+      </div>
+
+      <div class="row item__c__5">
+        <div class="col-md-2">
+          <label>加成係數5</label>
+          {{ form.plusValueC5|add_class:"form-control"|attr:"autocomplete:off" }}
+        </div>
+        <div class="col-md-10">
+          <label>項目5</label>
+          {{ form.plusItemC5|add_class:"form-control"|attr:"autocomplete:off" }}
+        </div>
+      </div>
+      
+      <div class="row item__c__other">
+        <div class="col-md-2">
+          <label>加成係數(其他)</label>
+          {{ form.plusValueOtherC|add_class:"form-control"|attr:"autocomplete:off" }}
+        </div>
+        <div class="col-md-10">
+          <label>其他</label>
+          {{ form.plusItemOtherC|add_class:"form-control"|attr:"autocomplete:off" }}
+        </div>
+      </div>
+
+      {{ request.user.userFullName|json_script:"author_fullname" }}
+
+
+      <div class="row mt-2">
+        <div class="col-md-6 mt-2">
+          <a href="{% url 'yfcase:yfcase_detail' instance_yfcase.id %}" class="btn btn-secondary form-control" >返回</a>
+        </div>
+        <div class="col-md-6 mt-2">
+          <input type="submit" class="btn btn-info form-control" value="調整" onclick="post_score_c_edit_submit()">
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- 為防止在運行jquery程式碼時出錯Uncaught ReferenceError: $ is not defined，所以要將jquery.min.js -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+   
+  <script>
+    function post_score_c_edit_submit() {
+      const author_fullname = JSON.parse(document.getElementById('author_fullname').textContent);
+      document.getElementById("id_objectBuildScorerC").value = author_fullname;
+    }
+  </script>
+{% endblock %}

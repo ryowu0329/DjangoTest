@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block head_title %}
+  {{ title }}
+{% endblock head_title %}
+
+{% block style %}
+  <style>
+    .form__container { border-radius: 5px; background-color: #f2f2f2; padding: 20px; margin-top: 20px}
+    .help-block {
+      color: red;
+    }
+  </style>
+{% endblock style %}
+
+{% block content %}
+<div class="form__container">
+  <h1>{{ title }}</h1>
+  <form action="" method="post" id="buildCreateForm">{% csrf_token %}
+
+    {{ form.yfcase|attr:"type:hidden" }}
+    
+    <div class="row mt-2">
+      <div class="col-md-6 mt-2">
+        <label for="{{ form.surveyFirstDay.id_for_label }}">{{ form.surveyFirstDay.label }}</label>
+        {{ form.surveyFirstDay|add_class:'form-control'|attr:"autocomplete:off" }}
+        <div class="invalid-feedback">
+          {{ form.surveyFirstDay.error }}
+        </div>
+      </div>
+      <div class="col-md-6 mt-2">
+        <label for="{{ form.surveySecondDay.id_for_label }}">{{ form.surveySecondDay.label }}</label>
+        {{ form.surveySecondDay|add_class:'form-control'|attr:"autocomplete:off" }}
+        <div class="invalid-feedback">
+          {{ form.surveySecondDay.error }}
+        </div>
+      </div>
+    </div>
+    
+    <div class="row mt-2">
+      <div class="col-md mt-2">
+        <label for="{{ form.surveyForeclosureAnnouncementLink.id_for_label }}">{{ form.surveyForeclosureAnnouncementLink.label }}</label>
+        {{ form.surveyForeclosureAnnouncementLink|add_class:'form-control'|attr:"autocomplete:off" }}
+        <div class="invalid-feedback">
+          {{ form.surveyForeclosureAnnouncementLink.error }}
+        </div>
+      </div>
+    </div>
+    
+    <div class="row mt-2">
+      <div class="col-md mt-2">
+        <label for="{{ form.survey988Link.id_for_label }}">{{ form.survey988Link.label }}</label>
+        {{ form.survey988Link|add_class:'form-control'|attr:"autocomplete:off" }}
+        <div class="invalid-feedback">
+          {{ form.survey988Link.error }}
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-2">
+      <div class="col-md mt-2">
+        <label for="{{ form.surveyObjectPhotoLink.id_for_label }}">{{ form.surveyObjectPhotoLink.label }}</label>
+        {{ form.surveyObjectPhotoLink|add_class:'form-control'|attr:"autocomplete:off" }}
+        <div class="invalid-feedback">
+          {{ form.surveyObjectPhotoLink.error }}
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-2">
+      <div class="col-md mt-2">
+        <label for="{{ form.surveyForeclosureRecordLink.id_for_label }}">{{ form.surveyForeclosureRecordLink.label }}</label>
+        {{ form.surveyForeclosureRecordLink|add_class:'form-control'|attr:"autocomplete:off" }}
+        <div class="invalid-feedback">
+          {{ form.surveyForeclosureRecordLink.error }}
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-2">
+      <div class="col-md mt-2">
+        <label for="{{ form.surveyObjectViewLink.id_for_label }}">{{ form.surveyObjectViewLink.label }}</label>
+        {{ form.surveyObjectViewLink|add_class:'form-control'|attr:"autocomplete:off" }}
+        <div class="invalid-feedback">
+          {{ form.surveyObjectViewLink.error }}
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-2">
+      <div class="col-md-6 mt-2">
+        <a href="{% url 'yfcase:yfcase_detail' instance_yfcase.id %}" class="btn btn-secondary form-control" >返回</a>
+      </div>
+      <div class="col-md-6 mt-2">
+        {% if instance.id %}
+          <input type="submit" class="btn btn-success form-control" value="更新">
+        {% else %}
+          <input type="submit" class="btn btn-info form-control" value="新增" onclick="get_survey_yfcase()">
+        {% endif %}
+      </div>
+    </div>
+
+  </form>
+</div>
+
+<!-- 為防止在運行jquery程式碼時出錯Uncaught ReferenceError: $ is not defined，所以要將jquery.min.js -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+  $(function() {
+    $( ".datepicker" ).datepicker({
+      dateFormat: "yy-mm-dd"
+    });
+  });
+
+  function get_survey_yfcase() {
+    var url = (window.location.pathname).replace("/yfcase/","").replace("/survey/create/",""); 
+    document.getElementById("id_yfcase").value = url;
+  }
+</script>
+{% endblock content %}

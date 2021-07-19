@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+{% load urlify %}
+{% load widget_tweaks %}
+{% load humanize %}
+
+{% block style %} 
+  <style>
+    * {
+      font-family: 'Roboto','Noto Sans TC', sans-serif;
+    }
+    .yfcase__detail__caption {
+      font-size: 30pt;
+      font-weight: 700;
+      text-align: center;
+      vertical-align: bottom;
+    }
+    .yfcase__detail__test {
+      display: flex;
+      justify-content: space-between;
+    }
+    .yfcase__detail__subtitle {
+      direction: flex;
+      flex-direction: row;
+      text-align: right;
+    }
+    .yfcase__detail__subtitle > label {
+      font-size:16pt;
+      font-weight: 700;
+    }
+    th,td {
+      text-align: center;
+    }
+    th { color:black; }
+    td { font-weight: 600; font-size:16px; color:blue; }
+    .text-left { text-align: left; }
+    .text-right { text-align: right; }
+    .text-red { font-size: 10pt; color: red; font-weight: 700; }
+    .text-blue { font-size: 10pt; color: blue; font-weight: 700; }
+    .text-green { font-size: 10pt; color: green; font-weight: 700; }
+    .text-red-12 { font-size: 12pt; color: red; font-weight: 700; }
+    .text-blue-12 { font-size: 12pt; color: blue; font-weight: 700; }
+    .text-green-12 { font-size: 12pt; color: green; font-weight: 700; }
+    .text-mark { font-size: 10.5pt; background-color: yellow; font-weight: 700; }
+    .btn__icon__create { background-color: MediumBlue; border:2px solid darkgrey; border-radius: 5px; padding:2px 7px; font-weight: 500; color:white; text-decoration:none; }
+    .btn__icon__update { background-color: DarkGreen; border:2px solid darkgrey; border-radius: 5px; padding:2px 7px; font-weight: 500; color:white; text-decoration:none; }
+    .btn__icon__delete { background-color: DarkRed; border:2px solid darkgrey; border-radius: 5px; padding:2px 7px; font-weight: 500; color:white; text-decoration:none; }
+    
+  </style>
+{% endblock style %}
+
+{% block content %}
+
+  <!-- 標頭 -->
+  <div class="col">
+    <div class="yfcase__detail__caption">
+      {{object.yfcaseCaseNumber}} YF評量表
+    </div>
+  </div>
+  
+  <div class="col">
+    <div class="container col">
+      <!--基本資料-->
+      <div class="yfcase__detail__test">
+        <div class="yfcase__detail__subtitle">
+          <label>基本資料</label>
+          <a href="{% url 'yfcase:yfcase_update' object.id %}" class="btn__icon__update">變更</a>
+        </div>
+      </div>
+      <div class="row">
+        <!--基本資料樣版-->
+        {% include "./partials/baseData.html" %}
+      </div>
+    
+      <!-- 土地 -->
+      <div class="yfcase__detail__test">
+        <div class="yfcase__detail__subtitle">
+          <label>土地</label>
+          <a href="{% url 'yfcase:land_create' object.id %}" class="btn__icon__create">新增</a>
+        </div>
+        <div class="yfcase__detail__subtitle">
+          {% if object.lands.count > 0 %}
+            合計：{{ object.get_land_holding_point_area_total|floatformat:"2" }} m<sup>2</sup> 
+            ({{ object.get_land_holding_point_area_total|m2toping|floatformat:"2" }} 坪)
+          {% endif %}
+        </div>
+      </div>
+
+      <!--土地樣版-->
+      <div class="row">
+        {% include "./partials/land.html" %}
+      </div>
+
+      <!-- 建物 -->
+      <div class="yfcase__detail__test">
+        <div class="yfcase__detail__subtitle">
+          <label>建物</label>
+          <a href="{% url 'yfcase:build_create' object.id %}" class="btn__icon__create">新增</a>
+        </div>
+        <div class="yfcase__detail__subtitle">
+          {% if object.builds.count > 0 %}
+            合計：{{ object.get_build_holding_point_after_group_total|floatformat:"2" }} m<sup>2</sup> 
+            ({{ object.get_build_holding_point_after_group_total|m2toping|floatformat:"2" }} 坪)
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="row">
+        <!--建物樣版-->
+        {% include "./partials/build.html" %}
+      </div>
+
+      <!-- 拍賣資訊 -->
+      <div class="yfcase__detail__test">
+        <div class="yfcase__detail__subtitle">
+          <label>拍賣資訊</label>
+          {% if object.auctions.all %}
+            {% for auction in object.auctions.all %}
+              <a href="{% url 'yfcase:auction_update' object.id auction.id %}" class="btn__icon__update">變更</a> 
+            {% endfor %}
+          {% else %}
+            <a href="{% url 'yfcase:auction_create' object.id %}" class="btn__icon__create">新增</a> 
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="row">
+        <!--拍賣樣版-->
+        {% include "./partials/auction.html" %}
+      </div>
+  
+      <!-- 勘查記錄 -->
+      <div class="yfcase__detail__test">
+        <div class="yfcase__detail__subtitle">
+          <label>勘查記錄</label>
+          {% if object.surveys.all %}
+            {% for survey in object.surveys.all %}
+              <a href="{% url 'yfcase:survey_update' object.id survey.id %}" class="btn__icon__update">變更</a> 
+            {% endfor %}
+          {% else %}
+            <a href="{% url 'yfcase:survey_create' object.id %}" class="btn__icon__create">新增</a> 
+          {% endif %}
+        </div>
+      </div>
+  
+      <div class="row">
+        <!--實勘樣版-->
+        {% include "./partials/survey.html" %}
+      </div>
+  
+      <!-- 參考物件 -->
+      <div class="yfcase__detail__test">
+        <div class="yfcase__detail__subtitle">
+          <label>參考物件</label>
+          <a href="{% url 'yfcase:objectbuild_create' object.id %}" class="btn__icon__create">新增</a>
+        </div>
+        <div class="yfcase__detail__subtitle">
+          {% if object.objectbuilds.count > 0 %}
+            時價：{{object.pbk|floatformat:0|intcomma}}元
+          {% endif %}
+        </div>
+      </div>
+    
+      <div class="row">
+        <!-- 參考物件分離樣版 -->
+        {% include "./partials/object_building.html" %}
+      </div> 
+
+      <!-- 最終判定 -->
+      <div class="yfcase__detail__test">
+        <div class="yfcase__detail__subtitle">
+          <label>最終判定</label>
+          <a href="{% url 'yfcase:finaldecision_create' object.id %}" class="btn__icon__create">新增</a>
+        </div>
+      </div>
+      
+      <div class="row">
+        <!-- 最終判定樣版 -->
+        {% include "./partials/finalDecision.html" %}
+      </div>
+
+      <!-- 執行結果 -->
+      <div class="yfcase__detail__test">
+        <div class="yfcase__detail__subtitle">
+          <label>執行結果</label>
+          {% if object.results.count == 0 %}
+            <a href="{% url 'yfcase:result_create' object.id %}" class="btn__icon__create">新增</a>
+          {% endif %}
+        </div>
+      </div>
+      
+      <div class="row">
+        <!-- 執行結果樣版 -->
+        {% include "./partials/result.html" %}
+      </div>
+
+    </div>
+  </div>
+
+{% endblock content %}

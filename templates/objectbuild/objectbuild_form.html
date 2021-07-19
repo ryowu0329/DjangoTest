@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block head_title %}
+  {{ title }}
+{% endblock head_title %}
+
+{% block style %}
+  <style>
+    .form__container { border-radius: 5px; background-color: #f2f2f2; padding: 20px; margin-top: 20px}
+    .help-block {
+      color: red;
+    }
+    .form-row {
+      padding-bottom:10px;
+    }
+    label{ font-size: 14pt; font-weight:700; }
+  </style>
+{% endblock style %}
+
+{% block content %}
+<div class="form__container">
+  <h1>{{ title }}</h1>
+  <form method="POST" action="" enctype='multipart/form-data' id="objectBuildCreateForm">{% csrf_token %}
+    {{ form.yfcase|attr:"type:hidden" }} 
+
+    <div class="row">
+      <div class="col-md-4">
+        <div class="form-group">
+          <label style="margin-bottom: 2px;">{{ form.objectBuildStatus.label }}</label>
+          {{ form.objectBuildStatus|add_class:"form-control fieldcolor pt-0" }}
+        </div>
+      </div>
+      <div class="col-md-8">
+        <div class="form-group">
+          <label style="margin-bottom: 2px;">{{ form.objectBuildAddress.label }} <small style="color:blue;">(*無需輸入縣市/鄉鎮區里)</small> </label>
+          {{ form.objectBuildAddress|add_class:"form-control fieldcolor pt-0" }}
+        </div>
+      </div>
+    </div>
+    
+    <div class="row">
+      <div class="col-md-2">
+        <div class="form-row">
+          <div class="form-group">
+            <label style="margin-bottom: 2px;">{{ form.objectBuildTotalPrice.label }}</label>
+            {{ form.objectBuildTotalPrice|add_class:"form-control fieldcolor pt-0" }}
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="form-row">
+          <div class="form-group col">
+            <label style="margin-bottom: 2px;">{{ form.objectBuildBuildArea.label }} </label>
+            {{ form.objectBuildBuildArea|add_class:"form-control fieldcolor pt-0" }}
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="form-row">
+          <div class="form-group col">
+            <label style="margin-bottom: 2px;">{{ form.objectBuildSubBuildArea.label }} </label>
+            {{ form.objectBuildSubBuildArea|add_class:"form-control fieldcolor pt-0" }}
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="form-row">
+          <div class="form-group col">
+            <label style="margin-bottom: 2px;">{{ form.objectBuildHouseAge.label }}</label>
+            {{ form.objectBuildHouseAge|add_class:"form-control fieldcolor pt-0" }}
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="form-row">
+          <div class="form-group col">
+            <label style="margin-bottom: 2px;">{{ form.objectBuildFloorHeight.label }}</label>
+            {{ form.objectBuildFloorHeight|add_class:"form-control fieldcolor pt-0" }}
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="form-row">
+          <div class="form-group col">
+            <label style="margin-bottom: 2px;">{{ form.objectBuildTransactionDate.label }}</label>
+            {{ form.objectBuildTransactionDate|add_class:"form-control fieldcolor pt-0" }}
+          </div>
+        </div>
+      </div>
+      
+    </div>
+    
+    <div class="row">
+      <div class="col">
+        <div class="form-row">
+          <div class="form-group col">
+            <label style="margin-bottom: 2px;">{{ form.objectBuildUrl.label }}</label>
+            {{ form.objectBuildUrl|add_class:"form-control fieldcolor pt-0" }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <a href="{% url 'yfcase:yfcase_detail' instance_yfcase.id %}" class="btn btn-secondary" >返回</a>
+    {% if instance.id %}
+      <input type="submit" class="btn btn-secondary" value="更新">
+    {% else %}
+      <input type="submit" class="btn btn-secondary" value="新增" onclick="get_objectbuild_yfcase()">
+    {% endif %}
+  </form>
+</div>
+
+<!-- 為防止在運行jquery程式碼時出錯Uncaught ReferenceError: $ is not defined，所以要將jquery.min.js -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+ 
+<script>
+  $(function() {
+    $('#objectBuildCreateForm').bootstrapValidator({
+      // To use feedback icons, ensure that you use Bootstrap v3.1.0 or later
+      feedbackIcons: {
+        valid: 'glyphicon glyphicon-ok',
+        invalid: 'glyphicon glyphicon-remove',
+        validating: 'glyphicon glyphicon-refresh'
+      },
+      fields: {
+        objectBuildAddress: {
+          validators: {
+            notEmpty: {
+              message: '此一欄位不得為空'
+            }
+          }
+        },
+        objectBuildTotalPrice: {
+          validators: {
+            notEmpty: {
+              message: '此一欄位不得為空'
+            },
+            integer: {
+              message: '此欄需為正整數，且需大於 1 '
+            },
+            between: {
+              min: 1,
+              max: 99999999,
+              message: '此欄需為正整數，且需介於 1 - 99999999 '
+            }
+          }
+        },
+        objectBuildBuildArea: {
+          validators: {
+            notEmpty: {
+              message: '此一欄位不得為空'
+            },
+            between: {
+              min: 0.01,
+              max: 99999.99,
+              message: '此欄需為數字(小數點最多兩位)，且需介於 0.01 - 99999.99 之間'
+            },
+            regexp: {
+              regexp: /^\d{1,5}(\.\d{1,2})?$/i,
+              message: '此欄需為數字(小數點最多兩位)，且需介於 0.01 - 99999.99 之間'
+            }
+          }
+        },
+        objectBuildHouseAge: {
+          validators: {
+            regexp: {
+              regexp: /^\d{1,2}(\.\d{1,2})?$/i,
+              message: '無法取得屋齡則為空格，此欄需為數字(小數點最多兩位)，且需介於 0.01 - 99.99 之間'
+            }
+          }
+        }
+      }
+    });
+    
+    
+    $( ".datepicker" ).datepicker({
+      dateFormat: "yy-mm-dd"
+    });
+    
+  });
+    
+  function get_objectbuild_yfcase() {
+    var url = (window.location.pathname).replace("/yfcase/","").replace("/objectbuild/create/",""); 
+    document.getElementById("id_yfcase").value = url;
+
+  }
+
+</script>
+{% endblock %}

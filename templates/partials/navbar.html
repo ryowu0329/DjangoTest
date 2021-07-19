@@ -1,0 +1,40 @@
+<style type="text/css">
+  .navbar-nav > li {padding:0px 5px;}
+  .dropdown-item {background-color: lightgrey; color:black;}
+</style>
+
+{% if user.is_authenticated %}
+  <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+    <div class="collapse navbar-collapse d-flex justify-content-between mx-2" id="navbarsExampleDefault">
+      <ul class="navbar-nav bg-dark text-white mr-auto">
+        <li>
+          <a class="navbar-brand" href="/">首頁</a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="{% url 'yfcase:home_all' %}">所有</a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="{% url 'yfcase:home' %}">個人</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav bg-dark text-white ml-auto">
+        <li class="pt-1">
+          ({{user.userFullName}})
+        </li>
+        <li>
+          <a class="dropdown-item" href="{% url 'yfcase:yfcase_create' %}">新增評量表</a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="{% url 'yfcase:export' %}">匯出</a>
+        </li>
+        <li>
+          <a class="dropdown-item" href="{% url 'logout' %}">登出</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+{% endif %}
+
+<script>
+ 
+</script>

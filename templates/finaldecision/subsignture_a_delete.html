@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block head_title %}
+  {{ title }}
+{% endblock head_title %}
+
+{% block style %}
+  <style>
+    .help-block {
+      color: red;
+    }
+  </style>
+{% endblock style %}
+
+
+{% block content %}
+  <div class="col">
+    <h1>{{ title }}</h1>
+    <form method="POST" action="" enctype='multipart/form-data'>{% csrf_token %}
+      <p>你確定要刪除勘查者 "{{instance.subSigntrueA}}" 的評比 ?</p>
+      {{ form.subSigntrueA|attr:"type:hidden" }}
+      {{ form.subSigntrueDateA|attr:"type:hidden" }}
+      {{ form.subSigntrueWorkAreaA|attr:"type:hidden" }}
+
+      <a href="{% url 'yfcase:yfcase_detail' instance_yfcase.id %}" class="btn btn-secondary" >返回</a>
+      <input type="submit" class="btn btn-secondary" value="清除" onclick="set_subsignture_a_empty()">
+    </form>
+  </div>
+
+  <!-- 為防止在運行jquery程式碼時出錯Uncaught ReferenceError: $ is not defined，所以要將jquery.min.js -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+   
+  <script>
+    function set_subsignture_a_empty() {
+     $(function() {
+       document.getElementById("id_subSigntrueA").value = "";
+       document.getElementById("id_subSigntrueDateA").value = "";
+       document.getElementById("id_subSigntrueWorkAreaA").value = "";
+      });
+    }
+  </script>
+{% endblock %}

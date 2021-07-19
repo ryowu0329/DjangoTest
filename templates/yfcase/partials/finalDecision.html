@@ -1,0 +1,110 @@
+<!-- 最終判定 -->
+{% load urlify %}
+
+<style>
+  .regionalhead__table { border: 3px solid black; }
+  .regionalhead__th { background-color: LightSteelBlue; border: 1px solid black; text-align: center;} 
+  .result__th { background-color: CornflowerBlue; border: 1px solid black; text-align: center;} 
+  .case__th { background-color: Gainsboro; border: 1px solid black; text-align: center;} 
+  .regionalhead__td { border: 1px dotted black; }
+
+  .regionalhead__seal { width:100px;border-radius:50%;border:3px solid red; }
+  .regionalhead__td__person { font-size: 16pt; height: 37px; line-height: 50px; color: red; }
+  .regionalhead__td__date { 
+    color: red;
+    font-size: 10pt;
+    height: 20px;
+    line-height: 16px;
+    font-weight: 700;
+    margin: 0px;
+    border-top: 3px solid red;
+    border-bottom: 3px solid red;
+  }
+  .regionalhead__td__workarea { font-size: 16pt; height: 37px; line-height: 30px; color: red; }
+  .regionalhead__th:nth-child(1) { width: 6%; }
+  .regionalhead__th:nth-child(2) { width: 10%; }
+  .regionalhead__th:nth-child(4) { width: 11%; }
+  .regionalhead__td:nth-child(5) { width: 6%; }
+  .regionalhead__td:nth-child(6) { width: 11%; }
+  .regionalhead__td:nth-child(7) { width: 6%; }
+  .regionalhead__td:nth-child(8) { width: 11%; }
+
+  .finaldecision__td { padding:10px 5px; border-radius: 10px; }
+  .finaldecision__first { color:brown;border:5px solid brown; }
+  .finaldecision__second { color:purple;border:5px solid purple; }
+  .finaldecision__third { color:blue;border:5px solid blue; }
+  .finaldecision__fourth { color:green;border:5px solid green; }
+  .finaldecision__giveup { color:red;border:5px solid red; }
+</style>
+
+<!-- 測試樣版1 -->
+<table class="regionalhead__table">
+  <tr>
+    <th class="regionalhead__th">操作</th>
+    <th class="regionalhead__th">判定</th>
+    <th class="regionalhead__th">備註</th>
+    <th class="regionalhead__th">區域負責人</th>
+    <th class="regionalhead__th" colspan=2>副署人員1</th>
+    <th class="regionalhead__th" colspan=2>副署人員2</th>
+  </tr>
+  {% for finaldecision in object.finaldecisions.all %}
+    <tr>
+      <td class="regionalhead__td">
+        <a href="{% url 'yfcase:finaldecision_update' object.id finaldecision.id %}" class="btn__icon__update">改判</a>
+        <a href="{% url 'yfcase:finaldecision_delete' object.id finaldecision.id %}" class="btn__icon__delete">刪除</a>
+      </td>
+      <td class="regionalhead__td">
+        {% if finaldecision.finalDecision == "1拍進場" %}
+          <div class="finaldecision__td finaldecision__first">{{ finaldecision.finalDecision }}</div>
+        {% elif finaldecision.finalDecision == "2拍進場" %}
+          <div class="finaldecision__td finaldecision__second">{{ finaldecision.finalDecision }}</div>
+        {% elif finaldecision.finalDecision == "3拍進場" %}
+          <div class="finaldecision__td finaldecision__third">{{ finaldecision.finalDecision }}</div>
+        {% elif finaldecision.finalDecision == "4拍進場" %}
+          <div class="finaldecision__td finaldecision__fourth">{{ finaldecision.finalDecision }}</div>
+        {% elif finaldecision.finalDecision == "放棄" %}
+          <div class="finaldecision__td finaldecision__giveup">{{ finaldecision.finalDecision }}</div>
+        {% else %}
+          ""
+        {% endif %}
+      </td>
+      <td class="regionalhead__td">{{ finaldecision.finalDecisionRemark|default_if_none:"" }}</td>
+      <td class="regionalhead__td">
+        {% if finaldecision.regionalHead != None %}
+          <div class="regionalhead__seal">
+            <div class="regionalhead__td__person">{{ finaldecision.regionalHead }}</div>
+            <div class="regionalhead__td__date">{{ finaldecision.regionalHeadDate }}</div>
+            <div class="regionalhead__td__workarea">{{ finaldecision.regionalHeadWorkArea }}</div>
+          </div>
+        {% endif %}
+      </td>
+      <td class="regionalhead__td">
+        <a href="{% url 'yfcase:subsignture_a_update' object.id finaldecision.id %}" class="btn__icon__update">簽核</a><br>
+        <a href="{% url 'yfcase:subsignture_a_delete' object.id finaldecision.id %}" class="btn__icon__delete">刪除</a>
+      </td>
+      <td class="regionalhead__td">
+        {% if finaldecision.subSigntrueA != None %}
+          <div class="regionalhead__seal">
+            <div class="regionalhead__td__person">{{ finaldecision.subSigntrueA }}</div>
+            <div class="regionalhead__td__date">{{ finaldecision.subSigntrueDateA }}</div>
+            <div class="regionalhead__td__workarea">{{ finaldecision.subSigntrueWorkAreaA|isWordCountOverFour }}</div>
+          </div>
+        {% endif %}
+      </td>
+      <td class="regionalhead__td">
+        <a href="{% url 'yfcase:subsignture_b_update' object.id finaldecision.id %}" class="btn__icon__update">簽核</a><br>
+        <a href="{% url 'yfcase:subsignture_b_delete' object.id finaldecision.id %}" class="btn__icon__delete">刪除</a>
+      </td>
+      <td class="regionalhead__td">
+        {% if finaldecision.subSigntrueB != None %}
+          <div class="regionalhead__seal">
+            <div class="regionalhead__td__person">{{ finaldecision.subSigntrueB }}</div>
+            <div class="regionalhead__td__date">{{ finaldecision.subSigntrueDateB }}</div>
+            <div class="regionalhead__td__workarea">{{ finaldecision.subSigntrueWorkAreaB|isWordCountOverFour }}</div>
+          </div>
+        {% endif %}
+      </td>
+    </tr>
+  {% endfor %}
+</table>
+

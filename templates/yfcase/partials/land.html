@@ -1,0 +1,65 @@
+<!-- 土地 -->
+{% load urlify %}
+
+<style>
+  .land__table { border: 3px solid black;}
+  .land__th { width: 10%; background-color: Aquamarine; border: 1px solid black; text-align: center;} 
+  .land__td { border: 1px dotted black; }
+  .land__th:nth-child(1) { width: 7%; }
+  .land__th:nth-child(2) { width: auto; }
+  .land__th:nth-child(3) { width: 7%; }
+  .land__th:nth-child(4) { width: 15%; }
+  .land__th:nth-child(5) { width: 15%; }
+  .land__th:nth-child(6) { width: 15%; }
+</style>
+
+
+<table class="land__table">
+  <tr>
+    <th class="land__th">操作</th>
+    <th class="land__th">地號</th>
+    <th class="land__th">地號<br>謄本</th>
+    <th class="land__th">地坪(面積)<br>平方公尺(坪)</th>
+    <th class="land__th">持分</th>
+    <th class="land__th">地坪(持分)<br>平方公尺(坪)</th>
+  </tr>
+  {% for land in object.lands.all %}
+    <tr>
+      <td class="land__td">
+        <a href="{% url 'yfcase:land_update' object.id land.id %}" class="btn__icon__update">變更</a><br>
+        <a href="{% url 'yfcase:land_delete' object.id land.id %}" class="btn__icon__delete">刪除</a>
+      </td>
+      <td class="land__td text-left">
+        <div style="font-size:12pt;">
+          {{ object.yfcaseBigSection }}{{ land.landNumber }}
+        </div>
+      </td>
+      <td class="land__td">
+        {% if land.landUrl != None %}
+          <a href="{{ land.landUrl }}" target="_blank">
+            <i class="fas fa-paperclip"></i>
+          </a>
+        {% endif %}
+      </td>
+      <td class="land__td">
+        {% if land.landArea != 0 %}
+          {{ land.landArea }} m<sup>2</sup><br> 
+          ({{ land.landArea|m2toping|floatformat:"2" }} 坪)
+        {% endif %}
+      </td>
+      <td class="land__td">
+        {% if land.landHoldingPointPersonal > 0 and land.landHoldingPointAll > 0 %}
+          <div style="margin: 0px 10px;">{{ land.landHoldingPointPersonal }}</div>
+          <div style="border-top: 1px solid black;width:auto; display:inline-block !important; display:inline;padding:0px 10px;">{{ land.landHoldingPointAll }}</div>
+        {% endif %}
+      </td>
+      <td class="land__td">
+        {% if land.landHoldingPointPersonal > 0 and land.landHoldingPointAll > 0 %}
+          {{ land.get_land_holding_point_area|floatformat:"2" }} m<sup>2</sup><br> 
+          ({{ land.get_land_holding_point_area|m2toping|floatformat:"2" }} 坪)
+        {% endif %}
+      </td>
+    </tr>
+  {% endfor %}
+  
+</table>

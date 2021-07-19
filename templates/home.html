@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+{% load urlify %}
+{% block title %}Home{% endblock %}
+
+{% block style %}
+  <style>
+    .home_title {
+      color: red;
+      text-align: center;
+    }
+    .home_table{
+      width: 100%;
+      border: 3px solid black;
+    }
+    .home_head{
+      background-color: PaleTurquoise;
+    }
+    .home_head > tr > th {
+      border: 1px solid black;
+      border-bottom: 2px double;
+      text-align: center;
+    }
+    th:nth-child(1) { width: 5%; }  
+    th:nth-child(2) { width: 29%; }
+    th:nth-child(3) { width: 16%; }
+    th:nth-child(4) { width: 7%; }
+    th:nth-child(5) { width: 9%; }
+    th:nth-child(6) { width: 11%; }
+    th:nth-child(7) { width: 9%; }
+    th:nth-child(8) { width: 9%; }
+    th:nth-child(9) { width: 5%; }
+
+    .home_body > tr > td { border: 1px dotted grey; }
+    .text-mark { font-size: 10.5pt; background-color: yellow; font-weight: 700; }
+    .text-address { font-size: 10pt; font-weight: 700; }
+    .text-stopBuyDate { font-size: 9pt; background-color: yellow; font-weight: 700; }
+    .home__input { width:400px; }
+    .home__bg__red { background-color: red; color:white; font-weight: 700; }
+    .home__bg__green { background-color: green; color:white; font-weight: 700; }
+    /*.home__casenumber__td { width:14.2%; }*/
+
+    td:nth-child(1) { text-align: center; }
+    td:nth-child(2) { text-align: left; text-decoration: none;}
+    td:nth-child(2) > a { text-decoration: none;}
+    td:nth-child(3) { text-align: center; }
+    td:nth-child(4) { text-align: center; }
+    td:nth-child(5) { text-align: center; }
+    td:nth-child(6) { text-align: center; }
+    td:nth-child(7) { text-align: center; }
+    td:nth-child(8) { text-align: center; }
+    td:nth-child(9) { text-align: center; }
+
+    .icon__pdf { font-size:12pt; font-weight:700;  line-height: 30px;  border:3px double DarkBlue;  border-radius:50%;  text-align:center;padding: 0px 2px; margin: 0px; color: white;text-decoration: none;}
+    .icon__view { font-size:12pt; font-weight:700;  line-height: 30px;  border:3px double DarkBlue;  border-radius:5px;  text-align:center;padding: 0px 2px; margin: 0px; color: white;text-decoration: none;}
+    .icon__yfratingscale { background-color: blue; }
+    .icon__deedtax { background-color: red; }
+    .icon__realestateregistration { background-color: green; }
+    .icon__complaint { background-color: black; }
+    .icon__letter { background-color: purple; }
+    .icon__coowner { background-color: DarkOrange; }
+    .icon__view__grey {background-color: lightgrey; color: black;}
+    
+  </style>
+{% endblock style %}
+
+{% block content %}
+  <div class="home_title d-flex justify-content-between">
+    <h1 class="mb-0">案件清單</h1>
+    <form action="" method="GET" class="d-flex align-items-end pb-1"  >
+      <input type="text" name="q" placeholder="模糊比對(案號、住址、負責人、最終判定...等)" value='{{ request.GET.q }}' class="home__input">
+      <input type="submit" value="搜尋">
+    </form>
+  </div>
+  <div class="home_container">
+    <table class="home_table">
+      <thead class="home_head">
+        <tr>
+          <th>操作</th>
+          <th>案號</th>
+          <th>兩週內<br><div class="text-mark">拍別(一賣止日)</div></th>
+          <th>負責人</th>
+          <th>最終判定</th>
+          <th>執行結果</th>
+          <th>優購結果</th>
+          <th>標的編號</th>
+          <th>狀態</th>
+        </tr>
+      </thead>
+      <tbody class="home_body">
+        {% for yfcase in object_list %}
+        <tr>
+          <td>
+             <a href="{% url 'yfcase:yfcase_delete' yfcase.id %}">刪除</a>
+          </td>
+          <td>
+            <a href="{% url 'yfcase:yfcase_detail' yfcase.id %}" >
+              {{yfcase.yfcaseCaseNumber}}
+              <br>
+              <div class="text-address">
+                 &emsp;&#10149;{{yfcase.fullAddress}}
+              </div>
+            </a>
+            <div class="container">
+              <div class="row">
+                <div class="col-md-2">
+                  <a href="{% url 'yfcase:yfratingscalePDF_View' yfcase.pk %}?inline=" class="icon__pdf icon__yfratingscale">評</a>
+                </div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <!-- 兩週內 -->
+            {% if yfcase.get_auction_1st.auctionDateFirst %}
+              {{ yfcase.get_auction_1st.auctionDateFirst|less_two_week:"1拍"|default_if_none:"" }}
+            {% endif %}
+            {% if yfcase.get_auction_2nd.auctionDateSecond %}
+              {{ yfcase.get_auction_2nd.auctionDateSecond|less_two_week:"2拍"|default_if_none:"" }}
+            {% endif %}
+            {% if yfcase.get_auction_3rd.auctionDateThird %}
+              {{ yfcase.get_auction_3rd.auctionDateThird|less_two_week:"3拍"|default_if_none:"" }}
+            {% endif %}
+            {% if yfcase.get_auction_4th.auctionDateFourth %}
+              {{ yfcase.get_auction_4th.auctionDateFourth|less_two_week:"4拍"|default_if_none:"" }}
+            {% endif %}
+            <!-- 買止日 -->
+            {% for result in yfcase.get_result_stopBuyDate %}
+              <div class="text-stopBuyDate">一買止日({{ result.stopBuyDate }})</div>
+            {% endfor %} 
+          </td>
+          <td>{{ yfcase.user }}</td>
+          <td>
+            {% for finaldecision in yfcase.finaldecisions.all %}
+              {{ finaldecision.finalDecision }}<br>
+            {% endfor %}             
+          </td>
+          <td>
+            {% for result in yfcase.results.all %}
+              {% if result.actionResult == '等待優購' or result.actionResult == '遭優購' or result.actionResult == '無人優購' %}
+                得標
+              {% else %}
+                {{ result.actionResult }}
+              {% endif %}
+            {% endfor %}
+          </td>
+          <td>
+            {% for result in yfcase.results.all %}
+              {% if result.actionResult == '等待優購' or result.actionResult == '遭優購' or result.actionResult == '無人優購' %}
+                {{ result.actionResult }}
+              {% endif %}
+            {% endfor %}
+          </td>
+          <td>
+            {% for result in yfcase.results.all %}
+              {{ result.objectNumber|default_if_none:"" }}
+            {% endfor %}
+          </td>
+          {% if yfcase.yfcaseCaseStatus == "在途" %}
+            <td class="home__bg__green">{{ yfcase.yfcaseCaseStatus }}</td>
+          {% else %}
+            <td class="home__bg__red">{{ yfcase.yfcaseCaseStatus }}</td>
+          {% endif %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% include "pagination.html" %}
+  </div>
+{% endblock %}
+
